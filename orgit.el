@@ -159,7 +159,7 @@ If all of the above fails then `orgit-export' raises an error."
 (defun orgit-log-store ()
   (when (eq major-mode 'magit-log-mode)
     (let ((repo (abbreviate-file-name default-directory))
-          (rev  (cadr magit-refresh-args)))
+          (rev  (magit-name-rev (cadr magit-refresh-args))))
       (org-store-link-props
        :type        "orgit-log"
        :link        (format "orgit-log:%s::%s" repo rev)

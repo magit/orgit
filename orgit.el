@@ -190,7 +190,7 @@ If all of the above fails then `orgit-export' raises an error."
 (defun orgit-rev-store ()
   (when (memq major-mode '(magit-commit-mode magit-revision-mode))
     (let ((repo (abbreviate-file-name default-directory))
-          (rev  (car magit-refresh-args)))
+          (rev  (magit-rev-parse (car magit-refresh-args))))
       (org-store-link-props
        :type        "orgit-rev"
        :link        (format "orgit-rev:%s::%s" repo rev)

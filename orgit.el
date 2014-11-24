@@ -185,7 +185,7 @@ If all of the above fails then `orgit-export' raises an error."
           (add-hook 'org-store-link-functions 'orgit-rev-store)))
 
 (defun orgit-rev-store ()
-  (when (eq major-mode 'magit-commit-mode)
+  (when (memq major-mode '(magit-commit-mode magit-revision-mode))
     (let ((repo (abbreviate-file-name default-directory))
           (rev  (car magit-refresh-args)))
       (org-store-link-props

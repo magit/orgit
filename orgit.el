@@ -4,8 +4,9 @@
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
-;; Version: 0.1.0
-;; Package-Requires: ((magit "2.1.0") (org "8"))
+
+;; Package-Requires: ((cl-lib "0.5") (dash "2.9.0") (magit "2.1.0") (org "8"))
+;; Homepage: https://github.com/magit/orgit
 
 ;; This library was inspired by `org-magit.el' which was written by
 ;; Yann Hodique <yann.hodique@gmail.com> and is distributed under the

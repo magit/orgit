@@ -144,7 +144,7 @@ If all of the above fails then `orgit-export' raises an error."
        :description (format "%s (magit-status)" repo)))))
 
 (defun orgit-status-open (path)
-  (magit-status (file-name-as-directory path) 'pop-to-buffer))
+  (magit-status-internal (file-name-as-directory path) 'pop-to-buffer))
 
 (defun orgit-status-export (path desc format)
   (orgit-export path desc format "status" 1))

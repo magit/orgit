@@ -136,6 +136,7 @@ If all of the above fails then `orgit-export' raises an error."
   '(progn (org-add-link-type "orgit" 'orgit-status-open 'orgit-status-export)
           (add-hook 'org-store-link-functions 'orgit-status-store)))
 
+;;;###autoload
 (defun orgit-status-store ()
   (when (eq major-mode 'magit-status-mode)
     (let ((repo (abbreviate-file-name default-directory)))
@@ -144,9 +145,11 @@ If all of the above fails then `orgit-export' raises an error."
        :link        (format "orgit:%s" repo)
        :description (format "%s (magit-status)" repo)))))
 
+;;;###autoload
 (defun orgit-status-open (path)
   (magit-status-internal (file-name-as-directory path) 'pop-to-buffer))
 
+;;;###autoload
 (defun orgit-status-export (path desc format)
   (orgit-export path desc format "status" 1))
 
@@ -157,6 +160,7 @@ If all of the above fails then `orgit-export' raises an error."
   '(progn (org-add-link-type "orgit-log" 'orgit-log-open 'orgit-log-export)
           (add-hook 'org-store-link-functions 'orgit-log-store)))
 
+;;;###autoload
 (defun orgit-log-store ()
   (when (eq major-mode 'magit-log-mode)
     (let ((repo (abbreviate-file-name default-directory))
@@ -172,11 +176,13 @@ If all of the above fails then `orgit-export' raises an error."
        :link        (format "orgit-log:%s::%s" repo rev)
        :description (format "%s (magit-log %s)" repo rev)))))
 
+;;;###autoload
 (defun orgit-log-open (path)
   (cl-destructuring-bind (default-directory rev)
       (split-string path "::")
     (magit-log (list rev))))
 
+;;;###autoload
 (defun orgit-log-export (path desc format)
   (orgit-export path desc format "rev" 2))
 
@@ -187,6 +193,7 @@ If all of the above fails then `orgit-export' raises an error."
   '(progn (org-add-link-type "orgit-rev" 'orgit-rev-open 'orgit-rev-export)
           (add-hook 'org-store-link-functions 'orgit-rev-store)))
 
+;;;###autoload
 (defun orgit-rev-store ()
   (when (memq major-mode '(magit-commit-mode magit-revision-mode))
     (let ((repo (abbreviate-file-name default-directory))
@@ -196,11 +203,13 @@ If all of the above fails then `orgit-export' raises an error."
        :link        (format "orgit-rev:%s::%s" repo rev)
        :description (format "%s (magit-commit %s)" repo rev)))))
 
+;;;###autoload
 (defun orgit-rev-open (path)
   (cl-destructuring-bind (default-directory rev)
       (split-string path "::")
     (magit-show-commit rev)))
 
+;;;###autoload
 (defun orgit-rev-export (path desc format)
   (orgit-export path desc format "rev" 3))
 

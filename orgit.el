@@ -161,10 +161,12 @@ If all of the above fails then `orgit-export' raises an error."
   (when (eq major-mode 'magit-log-mode)
     (let ((repo (abbreviate-file-name default-directory))
           (rev  (cadr magit-refresh-args)))
-      ;; FIXME Once version 2.1.0 of Magit is released,
-      ;; support multi-rev logs.
+      ;; TODO Once version 2.1.0 of Magit is released, support multi-rev logs.
       (when (listp rev)
         (setq rev (car rev)))
+      ;; TODO Once version 2.1.0 of Magit is released, remove this kludge.
+      (when (fboundp 'magit-name-rev)
+        (setq rev (magit-name-rev rev)))
       (org-store-link-props
        :type        "orgit-log"
        :link        (format "orgit-log:%s::%s" repo rev)

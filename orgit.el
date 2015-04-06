@@ -184,7 +184,7 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-log-export (path desc format)
-  (orgit-export path desc format "rev" 2))
+  (orgit-export path desc format "log" 2))
 
 ;;; Commit
 

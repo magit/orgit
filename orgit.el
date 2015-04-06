@@ -32,7 +32,7 @@
 ;;
 ;;    orgit:/path/to/repo/           links to a `magit-status' buffer
 ;;    orgit-log:/path/to/repo/::REV  links to a `magit-log' buffer
-;;    orgit-rev:/path/to/repo/::REV  links to a `magit-commit' buffer
+;;    orgit-rev:/path/to/repo/::REV  links to a `magit-revision' buffer
 
 ;; Such links can be stored from corresponding Magit buffers using
 ;; the command `org-store-link'.
@@ -95,16 +95,16 @@
      "http://git.kernel.org/cgit/%n/commit/?id=%r"))
   "Alist used to translate Git urls to web urls when exporting links.
 
-Each entry has the form (REMOTE-REGEXP STATUS LOG COMMIT).
-If a REMOTE-REGEXP matches the url of the choosen remote then one
-of the corresponding format strings STATUS, LOG or COMMIT is used
+Each entry has the form (REMOTE-REGEXP STATUS LOG REVISION).  If
+a REMOTE-REGEXP matches the url of the choosen remote then one of
+the corresponding format strings STATUS, LOG or REVISION is used
 according to the major mode of the buffer being linked to.
 
 The first submatch of REMOTE-REGEXP has to match the repository
 identifier (which usually consists of the username and repository
 name).  The %n in the format string is replaced with that match.
-LOG and COMMIT additionally have to contain %r which is replaced
-with the appropriate revision.
+LOG and REVISION additionally have to contain %r which is
+replaced with the appropriate revision.
 
 This can be overwritten in individual repositories using the Git
 variables `orgit.status', `orgit.log' and `orgit.commit'. The
@@ -116,7 +116,7 @@ are defined then `orgit-remote' and `orgit.remote' have no effect."
                        (regexp :tag "Remote regexp")
                        (string :tag "Status format")
                        (string :tag "Log format" :format "%{%t%}:    %v")
-                       (string :tag "Commit format"))))
+                       (string :tag "Revision format"))))
 
 (defcustom orgit-remote "origin"
   "Default remote used when exporting links.
@@ -186,7 +186,7 @@ If all of the above fails then `orgit-export' raises an error."
 (defun orgit-log-export (path desc format)
   (orgit-export path desc format "log" 2))
 
-;;; Commit
+;;; Revision
 
 ;;;###autoload
 (eval-after-load "org"
@@ -195,13 +195,13 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-rev-store ()
-  (when (memq major-mode '(magit-commit-mode magit-revision-mode))
+  (when (eq major-mode 'magit-revision-mode)
     (let ((repo (abbreviate-file-name default-directory))
           (rev  (magit-rev-parse (car magit-refresh-args))))
       (org-store-link-props
        :type        "orgit-rev"
        :link        (format "orgit-rev:%s::%s" repo rev)
-       :description (format "%s (magit-commit %s)" repo rev)))))
+       :description (format "%s (magit-rev %s)" repo rev)))))
 
 ;;;###autoload
 (defun orgit-rev-open (path)

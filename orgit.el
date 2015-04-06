@@ -1,11 +1,11 @@
 ;;; orgit.el --- support for Org links to Magit buffers
 
-;; Copyright (C) 2014  The Magit Project Developers
+;; Copyright (C) 2014-2015  The Magit Project Developers
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
 
-;; Package-Requires: ((cl-lib "0.5") (dash "2.9.0") (magit "2.1.0") (org "8"))
+;; Package-Requires: ((cl-lib "0.5") (dash "2.12.0") (magit "2.1.0") (org "8.3"))
 ;; Homepage: https://github.com/magit/orgit
 
 ;; This library was inspired by `org-magit.el' which was written by

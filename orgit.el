@@ -77,10 +77,10 @@
      "https://github.com/%n"
      "https://github.com/%n/commits/%r"
      "https://github.com/%n/commit/%r")
-    ("gitorious.org[:/]\\(.+?\\)\\(?:\\.git\\)?$"
-     "https://gitorious.org/%n"
-     "https://gitorious.org/%n/commits/%r"
-     "https://gitorious.org/%n/commit/%r")
+    ("gitlab.com[:/]\\(.+?\\)\\(?:\\.git\\)?$"
+     "https://gitlab.com/%n"
+     "https://gitlab.com/%n/commits/%r"
+     "https://gitlab.com/%n/commit/%r")
     ("bitbucket.org[:/]\\(.+?\\)\\(?:\\.git\\)?$"
      "https://bitbucket.org/%n"
      "https://bitbucket.org/%n/commits/branch/%r"

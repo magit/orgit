@@ -147,7 +147,7 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-status-open (path)
-  (magit-status-internal (file-name-as-directory path) 'pop-to-buffer))
+  (magit-status-internal (file-name-as-directory path)))
 
 ;;;###autoload
 (defun orgit-status-export (path desc format)

@@ -174,7 +174,8 @@ If all of the above fails then `orgit-export' raises an error."
 (defun orgit-log-open (path)
   (-let [(default-directory rev)
          (split-string path "::")]
-    (magit-log (list rev))))
+    (apply #'magit-log
+           (cons (list rev) (magit-log-arguments)))))
 
 ;;;###autoload
 (defun orgit-log-export (path desc format)
@@ -203,7 +204,8 @@ If all of the above fails then `orgit-export' raises an error."
 (defun orgit-rev-open (path)
   (-let [(default-directory rev)
          (split-string path "::")]
-    (magit-show-commit rev)))
+    (apply #'magit-show-commit
+           (cons rev (magit-diff-arguments)))))
 
 ;;;###autoload
 (defun orgit-rev-export (path desc format)

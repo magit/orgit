@@ -172,8 +172,8 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-log-open (path)
-  (cl-destructuring-bind (default-directory rev)
-      (split-string path "::")
+  (-let [(default-directory rev)
+         (split-string path "::")]
     (magit-log (list rev))))
 
 ;;;###autoload
@@ -201,8 +201,8 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-rev-open (path)
-  (cl-destructuring-bind (default-directory rev)
-      (split-string path "::")
+  (-let [(default-directory rev)
+         (split-string path "::")]
     (magit-show-commit rev)))
 
 ;;;###autoload

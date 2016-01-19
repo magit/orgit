@@ -212,14 +212,13 @@ If all of the above fails then `orgit-export' raises an error."
 ;;; Export
 
 (defun orgit-export (path desc format gitvar idx)
-  (let* ((parts   (split-string path "::"))
-         (rev     (cadr parts))
-         (default-directory (car parts))
-         (remotes (magit-git-lines "remote"))
-         (remote  (magit-get "orgit.remote"))
-         (remote  (cond ((= (length remotes) 1) (car remotes))
-                        ((member remote remotes) remote)
-                        ((member orgit-remote remotes) orgit-remote))))
+  (-let* (((default-directory rev)
+           (split-string path "::"))
+          (remotes (magit-git-lines "remote"))
+          (remote  (magit-get "orgit.remote"))
+          (remote  (cond ((= (length remotes) 1) (car remotes))
+                         ((member remote remotes) remote)
+                         ((member orgit-remote remotes) orgit-remote))))
     (if remote
         (-if-let
             (link (or (-when-let (url (magit-get "orgit" gitvar))

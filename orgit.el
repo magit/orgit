@@ -164,7 +164,7 @@ If all of the above fails then `orgit-export' raises an error."
 (defun orgit-log-store ()
   (when (eq major-mode 'magit-log-mode)
     (let ((repo (abbreviate-file-name default-directory))
-          (rev  (cadr magit-refresh-args)))
+          (rev  (caar magit-refresh-args)))
       ;; TODO Once version 2.1.0 of Magit is released, support multi-rev logs.
       (when (listp rev)
         (setq rev (car rev)))

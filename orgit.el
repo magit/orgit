@@ -190,10 +190,14 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-rev-store ()
+  "Store a link to a Magit-Revision mode buffer.
+With a prefix argument instead store the name of the branch that
+points at the revision, if any."
   (when (eq major-mode 'magit-revision-mode)
     (let ((repo (abbreviate-file-name default-directory))
           (rev  (car magit-refresh-args)))
-      (unless (magit-ref-p rev)
+      (unless (and current-prefix-arg
+                   (magit-ref-p rev))
         (setq rev (magit-rev-abbrev rev)))
       (org-store-link-props
        :type        "orgit-rev"

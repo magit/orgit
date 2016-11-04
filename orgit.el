@@ -218,8 +218,9 @@ points at the revision, if any."
 ;;; Export
 
 (defun orgit-export (path desc format gitvar idx)
-  (-let* (((default-directory rev)
+  (-let* (((dir rev)
            (split-string path "::"))
+          (default-directory (file-name-as-directory dir))
           (remotes (magit-git-lines "remote"))
           (remote  (magit-get "orgit.remote"))
           (remote  (cond ((= (length remotes) 1) (car remotes))

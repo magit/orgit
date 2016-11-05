@@ -65,6 +65,14 @@
 (require 'magit)
 (require 'org)
 
+(defun orgit-link-set-parameters (type &rest parameters)
+  (if (fboundp 'org-link-set-parameters) ; since v9.0
+      (apply  #'org-link-set-parameters type parameters)
+    (with-no-warnings
+      (funcall 'org-add-link-type type
+               (plist-get parameters :follow)
+               (plist-get parameters :export)))))
+
 ;;; Options
 
 (defgroup orgit nil
@@ -133,7 +141,9 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (eval-after-load "org"
-  '(progn (org-add-link-type "orgit" 'orgit-status-open 'orgit-status-export)
+  '(progn (orgit-link-set-parameters "orgit"
+                                     :follow 'orgit-status-open
+                                     :export 'orgit-status-export)
           (add-hook 'org-store-link-functions 'orgit-status-store)))
 
 ;;;###autoload
@@ -157,7 +167,9 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (eval-after-load "org"
-  '(progn (org-add-link-type "orgit-log" 'orgit-log-open 'orgit-log-export)
+  '(progn (orgit-link-set-parameters "orgit-log"
+                                     :follow 'orgit-log-open
+                                     :export 'orgit-log-export)
           (add-hook 'org-store-link-functions 'orgit-log-store)))
 
 ;;;###autoload
@@ -185,7 +197,9 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (eval-after-load "org"
-  '(progn (org-add-link-type "orgit-rev" 'orgit-rev-open 'orgit-rev-export)
+  '(progn (orgit-link-set-parameters "orgit-rev"
+                                     :follow 'orgit-rev-open
+                                     :export 'orgit-rev-export)
           (add-hook 'org-store-link-functions 'orgit-rev-store)))
 
 ;;;###autoload

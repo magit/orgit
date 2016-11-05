@@ -65,6 +65,17 @@
 (require 'magit)
 (require 'org)
 
+;;;###autoload
+(defun orgit-link-set-parameters (type &rest parameters)
+  (if (fboundp 'org-link-set-parameters) ; since v9.0
+      (apply  #'org-link-set-parameters type parameters)
+    (with-no-warnings
+      (org-add-link-type type
+                         (plist-get parameters :follow)
+                         (plist-get parameters :export))
+      (add-hook 'org-store-link-functions
+                (plist-get parameters :store)))))
+
 ;;; Options
 
 (defgroup orgit nil
@@ -133,8 +144,10 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (eval-after-load "org"
-  '(progn (org-add-link-type "orgit" 'orgit-status-open 'orgit-status-export)
-          (add-hook 'org-store-link-functions 'orgit-status-store)))
+  '(orgit-link-set-parameters "orgit"
+                              :store  'orgit-status-store
+                              :follow 'orgit-status-open
+                              :export 'orgit-status-export))
 
 ;;;###autoload
 (defun orgit-status-store ()
@@ -157,8 +170,10 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (eval-after-load "org"
-  '(progn (org-add-link-type "orgit-log" 'orgit-log-open 'orgit-log-export)
-          (add-hook 'org-store-link-functions 'orgit-log-store)))
+  '(orgit-link-set-parameters "orgit-log"
+                              :store  'orgit-log-store
+                              :follow 'orgit-log-open
+                              :export 'orgit-log-export))
 
 ;;;###autoload
 (defun orgit-log-store ()
@@ -185,8 +200,10 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (eval-after-load "org"
-  '(progn (org-add-link-type "orgit-rev" 'orgit-rev-open 'orgit-rev-export)
-          (add-hook 'org-store-link-functions 'orgit-rev-store)))
+  '(orgit-link-set-parameters "orgit-rev"
+                              :store  'orgit-rev-store
+                              :follow 'orgit-rev-open
+                              :export 'orgit-rev-export))
 
 ;;;###autoload
 (defun orgit-rev-store ()

@@ -65,6 +65,7 @@
 (require 'magit)
 (require 'org)
 
+;;;###autoload
 (defun orgit-link-set-parameters (type &rest parameters)
   (if (fboundp 'org-link-set-parameters) ; since v9.0
       (apply  #'org-link-set-parameters type parameters)

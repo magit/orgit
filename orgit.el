@@ -160,7 +160,7 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-status-open (path)
-  (magit-status-internal (file-name-as-directory path)))
+  (magit-status-internal (file-name-as-directory (expand-file-name path))))
 
 ;;;###autoload
 (defun orgit-status-export (path desc format)
@@ -187,8 +187,9 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-log-open (path)
-  (-let [(default-directory rev)
-         (split-string path "::")]
+  (-let* (((dir rev)
+           (split-string path "::"))
+          (default-directory (file-name-as-directory (expand-file-name dir))))
     (apply #'magit-log
            (cons (list rev) (magit-log-arguments)))))
 
@@ -223,8 +224,9 @@ points at the revision, if any."
 
 ;;;###autoload
 (defun orgit-rev-open (path)
-  (-let [(default-directory rev)
-         (split-string path "::")]
+  (-let* (((dir rev)
+           (split-string path "::"))
+          (default-directory (file-name-as-directory (expand-file-name dir))))
     (apply #'magit-show-commit
            (cons rev (magit-diff-arguments)))))
 
@@ -237,7 +239,7 @@ points at the revision, if any."
 (defun orgit-export (path desc format gitvar idx)
   (-let* (((dir rev)
            (split-string path "::"))
-          (default-directory (file-name-as-directory dir))
+          (default-directory (file-name-as-directory (expand-file-name dir)))
           (remotes (magit-git-lines "remote"))
           (remote  (magit-get "orgit.remote"))
           (remote  (cond ((= (length remotes) 1) (car remotes))

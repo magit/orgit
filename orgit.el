@@ -1,11 +1,11 @@
 ;;; orgit.el --- support for Org links to Magit buffers
 
-;; Copyright (C) 2014-2016  The Magit Project Developers
+;; Copyright (C) 2014-2017  The Magit Project Developers
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
 
-;; Package-Requires: ((emacs "24.4") (dash "2.12.1") (magit "2.4.1") (org "8.3.3"))
+;; Package-Requires: ((emacs "24.4") (dash "2.13.0") (magit "2.10.0") (org "8.3.3"))
 ;; Homepage: https://github.com/magit/orgit
 
 ;; This library was inspired by `org-magit.el' which was written by
@@ -27,15 +27,34 @@
 
 ;;; Commentary:
 
-;; This package defines several Org link types which can be used to
-;; link to certain Magit buffers.
-;;
-;;    orgit:/path/to/repo/           links to a `magit-status' buffer
-;;    orgit-log:/path/to/repo/::REV  links to a `magit-log' buffer
-;;    orgit-rev:/path/to/repo/::REV  links to a `magit-revision' buffer
+;; This package defines several Org link types, which can be used to
+;; link to certain Magit buffers.  Use the command `org-store-link'
+;; while such a buffer is current to store a link.  Later you can
+;; insert it into an Org buffer using the command `org-insert-link'.
 
-;; Such links can be stored from corresponding Magit buffers using
-;; the command `org-store-link'.
+;; Format
+;; ------
+
+;; The three link types defined here take these forms:
+;;
+;;    orgit:/path/to/repo/            links to a `magit-status' buffer
+;;    orgit-rev:/path/to/repo/::REV   links to a `magit-revision' buffer
+;;    orgit-log:/path/to/repo/::ARGS  links to a `magit-log' buffer
+
+;; Before v1.3.0 only the first revision was stored in `orgit-log'
+;; links, and all other revisions were discarded.  All other arguments
+;; were also discarded and Magit's usual mechanism for determining the
+;; switches and options was used instead.
+
+;; For backward compatibility, and because it is the common case and
+;; looks best, ARGS by default has the form REV as before.  However if
+;; linking to a log buffer that shows the log for multiple revisions,
+;; then ("REV"...) is used instead.  If `orgit-log-save-arguments' is
+;; non-nil, then (("REV"...) ("ARG"...) [("FILE"...)]) is always used,
+;; which allows restoring the buffer most faithfully.
+
+;; Export
+;; ------
 
 ;; When an Org file containing such links is exported, then the url of
 ;; the remote configured with `orgit-remote' is used to generate a web
@@ -54,8 +73,8 @@
 ;; To explicitly define the web urls, use something like:
 ;;
 ;;    git config orgit.status http://example.com/repo/overview
-;;    git config orgit.log http://example.com/repo/history/%r
 ;;    git config orgit.rev http://example.com/repo/revision/%r
+;;    git config orgit.log http://example.com/repo/history/%r
 
 ;;; Code:
 
@@ -140,6 +159,11 @@ If all of the above fails then `orgit-export' raises an error."
   :group 'orgit
   :type 'string)
 
+(defcustom orgit-log-save-arguments nil
+  "Whether `orgit-log' links store arguments beside the revisions."
+  :group 'orgit
+  :type 'boolean)
+
 ;;; Status
 
 ;;;###autoload
@@ -178,20 +202,36 @@ If all of the above fails then `orgit-export' raises an error."
 ;;;###autoload
 (defun orgit-log-store ()
   (when (eq major-mode 'magit-log-mode)
-    (let ((repo (abbreviate-file-name default-directory))
-          (rev  (caar magit-refresh-args)))
-      (org-store-link-props
-       :type        "orgit-log"
-       :link        (format "orgit-log:%s::%s" repo rev)
-       :description (format "%s (magit-log %s)" repo rev)))))
+    (let ((repo (abbreviate-file-name default-directory)))
+      (if orgit-log-save-arguments
+          (let ((args (if (car (last magit-refresh-args))
+                          magit-refresh-args
+                        (butlast magit-refresh-args))))
+            (org-store-link-props
+             :type        "orgit-log"
+             :link        (format "orgit-log:%s::%S" repo args)
+             :description (format "%s %S" repo (cons 'magit-log args))))
+        (let ((args (car magit-refresh-args)))
+          (org-store-link-props
+           :type        "orgit-log"
+           :link        (concat (format "orgit-log:%s::" repo)
+                                (if (cdr args)
+                                    (prin1-to-string args)
+                                  (car args)))
+           :description (format "%s %S" repo (list 'magit-log args))))))))
 
 ;;;###autoload
 (defun orgit-log-open (path)
-  (-let* (((dir rev)
+  (-let* (((dir args)
            (split-string path "::"))
           (default-directory (file-name-as-directory (expand-file-name dir))))
     (apply #'magit-log
-           (cons (list rev) (magit-log-arguments)))))
+           (cond ((string-prefix-p "((" args)
+                  (read args))
+                 ((string-prefix-p "(" args)
+                  (cons (read args) (magit-log-arguments)))
+                 (t
+                  (cons (list args) (magit-log-arguments)))))))
 
 ;;;###autoload
 (defun orgit-log-export (path desc format)

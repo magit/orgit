@@ -171,7 +171,8 @@ If all of the above fails then `orgit-export' raises an error."
   '(orgit-link-set-parameters "orgit"
                               :store  'orgit-status-store
                               :follow 'orgit-status-open
-                              :export 'orgit-status-export))
+                              :export 'orgit-status-export
+                              :complete 'orgit-status-complete-link))
 
 ;;;###autoload
 (defun orgit-status-store ()
@@ -189,6 +190,11 @@ If all of the above fails then `orgit-export' raises an error."
 ;;;###autoload
 (defun orgit-status-export (path desc format)
   (orgit-export path desc format "status" 1))
+
+;;;###autoload
+(defun orgit-status-complete-link (&optional arg)
+  "Create an orgit link using org file completion."
+  (replace-regexp-in-string "^file:" "orgit:" (org-file-complete-link arg)))
 
 ;;; Log
 

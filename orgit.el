@@ -174,6 +174,26 @@ If all of the above fails then `orgit-export' raises an error."
   :group 'orgit
   :type 'boolean)
 
+;;; Command
+
+;;;###autoload
+(eval-after-load "magit"
+  '(define-key magit-mode-map [remap org-store-link] 'orgit-store-link))
+
+;;;###autoload
+(defun orgit-store-link (arg)
+  "Like `org-store-link' but store links to all selected commits, if any."
+  (interactive "P")
+  (-if-let (sections (magit-region-sections 'commit))
+      (save-excursion
+        (dolist (section sections)
+          (goto-char (oref section start))
+	  (set-mark (point))
+          (activate-mark)
+          (call-interactively 'org-store-link))
+        (deactivate-mark))
+    (call-interactively 'org-store-link)))
+
 ;;; Status
 
 ;;;###autoload
@@ -186,7 +206,11 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-status-store ()
-  (when (eq major-mode 'magit-status-mode)
+  "Store a link to a Magit-Status mode buffer.
+When the region selects one or more commits, then do nothing.
+In that case `orgit-rev-store' stores one or more links instead."
+  (when (and (eq major-mode 'magit-status-mode)
+             (not (magit-region-sections 'commit)))
     (let ((repo (abbreviate-file-name default-directory)))
       (org-store-link-props
        :type        "orgit"
@@ -217,7 +241,11 @@ If all of the above fails then `orgit-export' raises an error."
 
 ;;;###autoload
 (defun orgit-log-store ()
-  (when (eq major-mode 'magit-log-mode)
+  "Store a link to a Magit-Log mode buffer.
+When the region selects one or more commits, then do nothing.
+In that case `orgit-rev-store' stores one or more links instead."
+  (when (and (eq major-mode 'magit-log-mode)
+             (not (magit-region-sections 'commit)))
     (let ((repo (abbreviate-file-name default-directory)))
       (if orgit-log-save-arguments
           (let ((args (if (car (last magit-refresh-args))
@@ -274,17 +302,26 @@ If all of the above fails then `orgit-export' raises an error."
 (defun orgit-rev-store ()
   "Store a link to a Magit-Revision mode buffer.
 With a prefix argument instead store the name of the branch that
-points at the revision, if any."
-  (when (eq major-mode 'magit-revision-mode)
-    (let ((repo (abbreviate-file-name default-directory))
-          (rev  (car magit-refresh-args)))
-      (unless (and current-prefix-arg
-                   (magit-ref-p rev))
-        (setq rev (magit-rev-abbrev rev)))
-      (org-store-link-props
-       :type        "orgit-rev"
-       :link        (format "orgit-rev:%s::%s" repo rev)
-       :description (format "%s (magit-rev %s)" repo rev)))))
+points at the revision, if any.
+
+When the region selects one or more commits, e.g. in a log, then
+store links to the Magit-Revision mode buffers for these commits."
+  (cond ((eq major-mode 'magit-revision-mode)
+         (orgit-rev-store-1 (car magit-refresh-args)))
+        ((and (derived-mode-p 'magit-mode)
+              (magit-region-sections 'commit))
+         (orgit-rev-store-1 (oref (magit-current-section) value)))))
+
+(defun orgit-rev-store-1 (rev)
+  (let ((repo (abbreviate-file-name default-directory)))
+    (unless (magit-ref-p rev)
+      (setq rev (if current-prefix-arg
+                    (magit-get-shortname rev)
+                  (magit-rev-abbrev rev))))
+    (org-store-link-props
+     :type        "orgit-rev"
+     :link        (format "orgit-rev:%s::%s" repo rev)
+     :description (format "%s (magit-rev %s)" repo rev))))
 
 ;;;###autoload
 (defun orgit-rev-open (path)

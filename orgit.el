@@ -371,7 +371,7 @@ store links to the Magit-Revision mode buffers for these commits."
           (error "Cannot determine public url for %s" path))
       (error "Cannot determine public remote for %s" default-directory))))
 
-;;; orgit.el ends soon
+;;; _
 (provide 'orgit)
 ;; Local Variables:
 ;; indent-tabs-mode: nil

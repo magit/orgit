@@ -5,7 +5,7 @@
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
 
-;; Package-Requires: ((emacs "24.4") (dash "2.13.0") (magit "2.10.0") (org "8.3.3"))
+;; Package-Requires: ((emacs "24.4") (dash "2.13.0") (magit "2.90.0") (org "8.3.3"))
 ;; Homepage: https://github.com/magit/orgit
 
 ;; This library is free software; you can redistribute it and/or modify
@@ -269,7 +269,7 @@ In that case `orgit-rev-store' stores one or more links instead."
   (-let* (((dir args)
            (split-string path "::"))
           (default-directory (file-name-as-directory (expand-file-name dir))))
-    (apply #'magit-log
+    (apply #'magit-log-other
            (cond ((string-prefix-p "((" args)
                   (read args))
                  ((string-prefix-p "(" args)

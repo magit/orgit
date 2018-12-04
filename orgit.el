@@ -5,7 +5,7 @@
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
 
-;; Package-Requires: ((emacs "24.4") (dash "2.13.0") (magit "2.90.0") (org "8.3.3"))
+;; Package-Requires: ((emacs "25.1") (dash "2.14.1") (magit "2.90.0") (org "8.3.3"))
 ;; Homepage: https://github.com/magit/orgit
 
 ;; This library is free software; you can redistribute it and/or modify

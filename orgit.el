@@ -130,9 +130,9 @@
      "https://code.orgmode.org/cgit.cgi/%n/commits/%r"
      "https://code.orgmode.org/cgit.cgi/%n/commit/%r")
     ("git.kernel.org/pub/scm[:/]\\(.+\\)$"
-     "http://git.kernel.org/cgit/%n"
-     "http://git.kernel.org/cgit/%n/log/?h=%r"
-     "http://git.kernel.org/cgit/%n/commit/?id=%r"))
+     "https://git.kernel.org/cgit/%n"
+     "https://git.kernel.org/cgit/%n/log/?h=%r"
+     "https://git.kernel.org/cgit/%n/commit/?id=%r"))
   "Alist used to translate Git urls to web urls when exporting links.
 
 Each entry has the form (REMOTE-REGEXP STATUS LOG REVISION).  If

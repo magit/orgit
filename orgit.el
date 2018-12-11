@@ -125,10 +125,10 @@
      "https://bitbucket.org/%n"
      "https://bitbucket.org/%n/commits/branch/%r"
      "https://bitbucket.org/%n/commits/%r")
-    ("orgmode.org[:/]\\(.+\\)$"
-     "http://orgmode.org/cgit.cgi/%n"
-     "http://orgmode.org/cgit.cgi/%n/log/?h=%r"
-     "http://orgmode.org/cgit.cgi/%n/commit/?id=%r")
+    ("code.orgmode.org[:/]\\(.+\\)$"
+     "https://code.orgmode.org/cgit.cgi/%n"
+     "https://code.orgmode.org/cgit.cgi/%n/commits/%r"
+     "https://code.orgmode.org/cgit.cgi/%n/commit/%r")
     ("git.kernel.org/pub/scm[:/]\\(.+\\)$"
      "http://git.kernel.org/cgit/%n"
      "http://git.kernel.org/cgit/%n/log/?h=%r"

@@ -323,7 +323,7 @@ store links to the Magit-Revision mode buffers for these commits."
     (unless (magit-ref-p rev)
       (setq rev (cond (current-prefix-arg      (magit-get-shortname rev))
                       (orgit-abbreviate-hashes (magit-rev-abbrev rev))
-                      (t rev))))
+                      (t                       (magit-rev-parse rev)))))
     (org-store-link-props
      :type        "orgit-rev"
      :link        (format "orgit-rev:%s::%s" repo rev)

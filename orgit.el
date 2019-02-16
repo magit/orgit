@@ -174,6 +174,12 @@ If all of the above fails then `orgit-export' raises an error."
   :group 'orgit
   :type 'boolean)
 
+(defcustom orgit-abbreviate-hashes t
+  "Whether to abbreviate revision hashes."
+  :package-version '(orgit . "1.6.0")
+  :group 'orgit
+  :type 'boolean)
+
 ;;; Command
 
 ;;;###autoload
@@ -315,9 +321,9 @@ store links to the Magit-Revision mode buffers for these commits."
 (defun orgit-rev-store-1 (rev)
   (let ((repo (abbreviate-file-name default-directory)))
     (unless (magit-ref-p rev)
-      (setq rev (if current-prefix-arg
-                    (magit-get-shortname rev)
-                  (magit-rev-abbrev rev))))
+      (setq rev (cond (current-prefix-arg      (magit-get-shortname rev))
+                      (orgit-abbreviate-hashes (magit-rev-abbrev rev))
+                      (t rev))))
     (org-store-link-props
      :type        "orgit-rev"
      :link        (format "orgit-rev:%s::%s" repo rev)

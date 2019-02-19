@@ -94,6 +94,9 @@
 (require 'magit)
 (require 'org)
 
+(eval-when-compile
+  (require 'subr-x))
+
 ;;;###autoload
 (defun orgit-link-set-parameters (type &rest parameters)
   (if (fboundp 'org-link-set-parameters) ; since v9.0
@@ -190,7 +193,7 @@ If all of the above fails then `orgit-export' raises an error."
 (defun orgit-store-link (arg)
   "Like `org-store-link' but store links to all selected commits, if any."
   (interactive "P")
-  (-if-let (sections (magit-region-sections 'commit))
+  (if-let ((sections (magit-region-sections 'commit)))
       (save-excursion
         (dolist (section sections)
           (goto-char (oref section start))
@@ -272,9 +275,9 @@ In that case `orgit-rev-store' stores one or more links instead."
 
 ;;;###autoload
 (defun orgit-log-open (path)
-  (-let* (((dir args)
-           (split-string path "::"))
-          (default-directory (file-name-as-directory (expand-file-name dir))))
+  (pcase-let*
+      ((`(,dir ,args) (split-string path "::"))
+       (default-directory (file-name-as-directory (expand-file-name dir))))
     (apply #'magit-log-other
            (cond ((string-prefix-p "((" args)
                   (read args))
@@ -331,9 +334,9 @@ store links to the Magit-Revision mode buffers for these commits."
 
 ;;;###autoload
 (defun orgit-rev-open (path)
-  (-let* (((dir rev)
-           (split-string path "::"))
-          (default-directory (file-name-as-directory (expand-file-name dir))))
+  (pcase-let*
+      ((`(,dir ,rev) (split-string path "::"))
+       (default-directory (file-name-as-directory (expand-file-name dir))))
     (apply #'magit-show-commit
            (cons rev (magit-diff-arguments)))))
 
@@ -351,24 +354,24 @@ store links to the Magit-Revision mode buffers for these commits."
 ;;; Export
 
 (defun orgit-export (path desc format gitvar idx)
-  (-let* (((dir rev)
-           (split-string path "::"))
-          (default-directory (file-name-as-directory (expand-file-name dir)))
-          (remotes (magit-git-lines "remote"))
-          (remote  (magit-get "orgit.remote"))
-          (remote  (cond ((= (length remotes) 1) (car remotes))
-                         ((member remote remotes) remote)
-                         ((member orgit-remote remotes) orgit-remote))))
+  (pcase-let*
+      ((`(,dir ,rev) (split-string path "::"))
+       (default-directory (file-name-as-directory (expand-file-name dir)))
+       (remotes (magit-git-lines "remote"))
+       (remote  (magit-get "orgit.remote"))
+       (remote  (cond ((= (length remotes) 1) (car remotes))
+                      ((member remote remotes) remote)
+                      ((member orgit-remote remotes) orgit-remote))))
     (if remote
-        (-if-let
-            (link (or (-when-let (url (magit-get "orgit" gitvar))
-                        (format-spec url `((?r . ,rev))))
-                      (-when-let (url (magit-get "remote" remote "url"))
-                        (--when-let (--first (string-match (car it) url)
-                                             orgit-export-alist)
-                          (format-spec (nth idx it)
-                                       `((?n . ,(match-string 1 url))
-                                         (?r . ,rev)))))))
+        (if-let ((link (or (when-let ((url (magit-get "orgit" gitvar)))
+                             (format-spec url `((?r . ,rev))))
+                           (when-let ((url (magit-get "remote" remote "url"))
+                                      (format (--first
+                                               (string-match (car it) url)
+                                               orgit-export-alist)))
+                               (format-spec (nth idx format)
+                                            `((?n . ,(match-string 1 url))
+                                              (?r . ,rev)))))))
             (pcase format
               (`html  (format "<a href=\"%s\">%s</a>" link desc))
               (`latex (format "\\href{%s}{%s}" link desc))

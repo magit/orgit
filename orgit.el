@@ -321,8 +321,25 @@ store links to the Magit-Revision mode buffers for these commits."
               (magit-region-sections 'commit))
          (orgit-rev-store-1 (oref (magit-current-section) value)))))
 
+(defun orgit-find-directory-in-path (directory)
+  "Return non-nil if DIRECTORY is found in `magit-repository-directories'.
+The check is done against `magit-list-repos'."
+  ;; Warning: `magit-list-repos' inconsistently uses a trailing slash.
+  (cl-labels ((derive (path)
+                      (file-name-base (directory-file-name path)))
+              (compare (path1 path2)
+                       (string= (derive path1)
+                                (derive path2))))
+    (when (file-exists-p directory)
+      (fset 'derive (lambda (path) (directory-file-name (file-truename path)))))
+    (cl-loop for repo in (magit-list-repos)
+             when (compare directory repo)
+             return repo)))
+
 (defun orgit-rev-store-1 (rev)
   (let ((repo (abbreviate-file-name default-directory)))
+    (when (orgit-find-directory-in-path repo)
+      (setq repo (file-name-base (directory-file-name repo))))
     (unless (magit-ref-p rev)
       (setq rev (cond (current-prefix-arg      (magit-get-shortname rev))
                       (orgit-abbreviate-hashes (magit-rev-abbrev rev))
@@ -336,7 +353,8 @@ store links to the Magit-Revision mode buffers for these commits."
 (defun orgit-rev-open (path)
   (pcase-let*
       ((`(,dir ,rev) (split-string path "::"))
-       (default-directory (file-name-as-directory (expand-file-name dir))))
+       (default-directory (or (orgit-find-directory-in-path dir)
+                              (file-name-as-directory (expand-file-name dir)))))
     (apply #'magit-show-commit
            (cons rev (magit-diff-arguments)))))
 

@@ -348,9 +348,10 @@ When the region selects one or more commits, e.g. in a log, then
 store links to the Magit-Revision mode buffers for these commits."
   (cond ((eq major-mode 'magit-revision-mode)
          (orgit-rev-store-1 (car magit-refresh-args)))
-        ((and (derived-mode-p 'magit-mode)
-              (magit-region-sections 'commit))
-         (orgit-rev-store-1 (oref (magit-current-section) value)))))
+        ((derived-mode-p 'magit-mode)
+         (when-let ((revs (magit-region-values 'commit)))
+           (mapc 'orgit-rev-store-1 revs)
+           t))))
 
 (defun orgit-rev-store-1 (rev)
   (let ((repo (orgit--current-repository))

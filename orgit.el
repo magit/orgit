@@ -177,8 +177,15 @@ If all of the above fails then `orgit-export' raises an error."
   :group 'orgit
   :type 'boolean)
 
-(defcustom orgit-abbreviate-hashes t
-  "Whether to abbreviate revision hashes."
+(defcustom orgit-store-reference nil
+  "Whether `orgit-rev-store' attemts to store link to a reference.
+
+If nil, then store a link to the commit itself, using its full
+hash.
+
+If t, then attempt to store a link to a tag or branch.  If that
+is not possible because no such reference points at the commit,
+then store a link to the commit itself."
   :package-version '(orgit . "1.6.0")
   :group 'orgit
   :type 'boolean)
@@ -310,8 +317,11 @@ In that case `orgit-rev-store' stores one or more links instead."
 ;;;###autoload
 (defun orgit-rev-store ()
   "Store a link to a Magit-Revision mode buffer.
-With a prefix argument instead store the name of the branch that
-points at the revision, if any.
+With a prefix argument instead store the name of a tag or branch
+that points at the revision, if any.
+
+If `orgit-store-reference' is non-nil, then the meaning of the
+prefix argument is reversed.
 
 When the region selects one or more commits, e.g. in a log, then
 store links to the Magit-Revision mode buffers for these commits."
@@ -322,15 +332,19 @@ store links to the Magit-Revision mode buffers for these commits."
          (orgit-rev-store-1 (oref (magit-current-section) value)))))
 
 (defun orgit-rev-store-1 (rev)
-  (let ((repo (abbreviate-file-name default-directory)))
-    (unless (magit-ref-p rev)
-      (setq rev (cond (current-prefix-arg      (magit-get-shortname rev))
-                      (orgit-abbreviate-hashes (magit-rev-abbrev rev))
-                      (t                       (magit-rev-parse rev)))))
+  (let ((repo (abbreviate-file-name default-directory))
+        (ref (and (if orgit-store-reference
+                      (not current-prefix-arg)
+                    current-prefix-arg)
+                  (or (and (magit-ref-p rev) rev)
+                      (magit-name-tag rev)
+                      (magit-name-branch rev)))))
     (org-store-link-props
      :type        "orgit-rev"
-     :link        (format "orgit-rev:%s::%s" repo rev)
-     :description (format "%s (magit-rev %s)" repo rev))))
+     :link        (format "orgit-rev:%s::%s" repo
+                          (or ref (magit-rev-parse rev)))
+     :description (format "%s (magit-rev %s)" repo
+                          (or ref (magit-rev-abbrev rev))))))
 
 ;;;###autoload
 (defun orgit-rev-open (path)

@@ -177,6 +177,28 @@ If all of the above fails then `orgit-export' raises an error."
   :group 'orgit
   :type 'boolean)
 
+(defcustom orgit-store-repository-id nil
+  "Whether to store only name of repository instead of path.
+
+If nil, then store the full path to the repository in the link.
+
+If t, then attempt to store only the name of the repository.
+This works by looking up the repository's path in the list of
+repositories defined by `magit-repository-directories'.  If the
+repository cannot be found there, then the path is used instead.
+If the repository is checked out multiple times, then the names
+of the clones are made unique by adding additional parts of the
+path.
+
+Storing just the name can be useful if you want to share links
+with others, but be aware that doing so does not guarantee that
+others will be able to open these links.  The repository has to
+be checked out under the same name that you use and it has to be
+configured in `magit-repository-directory'."
+  :package-version '(orgit . "1.6.0")
+  :group 'orgit
+  :type 'boolean)
+
 (defcustom orgit-store-reference nil
   "Whether `orgit-rev-store' attemts to store link to a reference.
 
@@ -395,13 +417,19 @@ store links to the Magit-Revision mode buffers for these commits."
 ;;; Utilities
 
 (defun orgit--current-repository ()
-  (abbreviate-file-name default-directory))
+  (or (and orgit-store-repository-id
+           (car (rassoc default-directory (magit-repos-alist))))
+      (abbreviate-file-name default-directory)))
 
 (defun orgit--repository-directory (repo)
-  (let ((dir (file-name-as-directory (expand-file-name repo))))
-    (unless (file-exists-p dir)
-      (error "Cannot open link; %S does not exist" dir))
-    dir))
+  (if (file-name-absolute-p repo)
+      (let ((dir (file-name-as-directory (expand-file-name repo))))
+        (unless (file-exists-p dir)
+          (error "Cannot open link; %S does not exist" dir))
+        dir)
+    (or (cdr (assoc repo (magit-repos-alist)))
+        (error "Cannot open link; no entry for %S in `%s'"
+               repo 'magit-repository-directories))))
 
 ;;; _
 (provide 'orgit)

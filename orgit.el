@@ -398,7 +398,10 @@ store links to the Magit-Revision mode buffers for these commits."
   (abbreviate-file-name default-directory))
 
 (defun orgit--repository-directory (repo)
-  (file-name-as-directory (expand-file-name repo)))
+  (let ((dir (file-name-as-directory (expand-file-name repo))))
+    (unless (file-exists-p dir)
+      (error "Cannot open link; %S does not exist" dir))
+    dir))
 
 ;;; _
 (provide 'orgit)

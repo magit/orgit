@@ -227,15 +227,15 @@ When the region selects one or more commits, then do nothing.
 In that case `orgit-rev-store' stores one or more links instead."
   (when (and (eq major-mode 'magit-status-mode)
              (not (magit-region-sections 'commit)))
-    (let ((repo (abbreviate-file-name default-directory)))
+    (let ((repo (orgit--current-repository)))
       (org-store-link-props
        :type        "orgit"
        :link        (format "orgit:%s" repo)
        :description (format "%s (magit-status)" repo)))))
 
 ;;;###autoload
-(defun orgit-status-open (path)
-  (magit-status-internal (file-name-as-directory (expand-file-name path))))
+(defun orgit-status-open (repo)
+  (magit-status-internal (orgit--repository-directory repo)))
 
 ;;;###autoload
 (defun orgit-status-export (path desc format)
@@ -262,7 +262,7 @@ When the region selects one or more commits, then do nothing.
 In that case `orgit-rev-store' stores one or more links instead."
   (when (and (eq major-mode 'magit-log-mode)
              (not (magit-region-sections 'commit)))
-    (let ((repo (abbreviate-file-name default-directory)))
+    (let ((repo (orgit--current-repository)))
       (if orgit-log-save-arguments
           (let ((args (if (car (last magit-refresh-args))
                           magit-refresh-args
@@ -282,9 +282,8 @@ In that case `orgit-rev-store' stores one or more links instead."
 
 ;;;###autoload
 (defun orgit-log-open (path)
-  (pcase-let*
-      ((`(,dir ,args) (split-string path "::"))
-       (default-directory (file-name-as-directory (expand-file-name dir))))
+  (pcase-let* ((`(,repo ,args) (split-string path "::"))
+               (default-directory (orgit--repository-directory repo)))
     (apply #'magit-log-other
            (cond ((string-prefix-p "((" args)
                   (read args))
@@ -332,7 +331,7 @@ store links to the Magit-Revision mode buffers for these commits."
          (orgit-rev-store-1 (oref (magit-current-section) value)))))
 
 (defun orgit-rev-store-1 (rev)
-  (let ((repo (abbreviate-file-name default-directory))
+  (let ((repo (orgit--current-repository))
         (ref (and (if orgit-store-reference
                       (not current-prefix-arg)
                     current-prefix-arg)
@@ -348,9 +347,8 @@ store links to the Magit-Revision mode buffers for these commits."
 
 ;;;###autoload
 (defun orgit-rev-open (path)
-  (pcase-let*
-      ((`(,dir ,rev) (split-string path "::"))
-       (default-directory (file-name-as-directory (expand-file-name dir))))
+  (pcase-let* ((`(,repo ,rev) (split-string path "::"))
+               (default-directory (orgit--repository-directory repo)))
     (apply #'magit-show-commit
            (cons rev (magit-diff-arguments)))))
 
@@ -393,6 +391,14 @@ store links to the Magit-Revision mode buffers for these commits."
               (_      link))
           (error "Cannot determine public url for %s" path))
       (error "Cannot determine public remote for %s" default-directory))))
+
+;;; Utilities
+
+(defun orgit--current-repository ()
+  (abbreviate-file-name default-directory))
+
+(defun orgit--repository-directory (repo)
+  (file-name-as-directory (expand-file-name repo)))
 
 ;;; _
 (provide 'orgit)

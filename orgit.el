@@ -257,7 +257,7 @@ In that case `orgit-rev-store' stores one or more links instead."
 
 ;;;###autoload
 (defun orgit-status-open (repo)
-  (magit-status-internal (orgit--repository-directory repo)))
+  (magit-status-setup-buffer (orgit--repository-directory repo)))
 
 ;;;###autoload
 (defun orgit-status-export (path desc format)
@@ -284,35 +284,32 @@ When the region selects one or more commits, then do nothing.
 In that case `orgit-rev-store' stores one or more links instead."
   (when (and (eq major-mode 'magit-log-mode)
              (not (magit-region-sections 'commit)))
-    (let ((repo (orgit--current-repository)))
-      (if orgit-log-save-arguments
-          (let ((args (if (car (last magit-refresh-args))
-                          magit-refresh-args
-                        (butlast magit-refresh-args))))
-            (org-store-link-props
-             :type        "orgit-log"
-             :link        (format "orgit-log:%s::%S" repo args)
-             :description (format "%s %S" repo (cons 'magit-log args))))
-        (let ((args (car magit-refresh-args)))
-          (org-store-link-props
-           :type        "orgit-log"
-           :link        (concat (format "orgit-log:%s::" repo)
-                                (if (cdr args)
-                                    (prin1-to-string args)
-                                  (car args)))
-           :description (format "%s %S" repo (list 'magit-log args))))))))
+    (let ((repo (orgit--current-repository))
+          (args (if orgit-log-save-arguments
+                    (if magit-buffer-log-files
+                        (list magit-buffer-revisions
+                              magit-buffer-log-args
+                              magit-buffer-log-files)
+                      (list magit-buffer-revisions
+                            magit-buffer-log-args))
+                  magit-buffer-revisions)))
+      (org-store-link-props
+       :type        "orgit-log"
+       :link        (format "orgit-log:%s::%S" repo args)
+       :description (format "%s %S" repo (cons 'magit-log args))))))
 
 ;;;###autoload
 (defun orgit-log-open (path)
   (pcase-let* ((`(,repo ,args) (split-string path "::"))
+               (`(,revs ,args ,files)
+                (cond ((string-prefix-p "((" args)
+                       (read args))
+                      ((string-prefix-p "(" args)
+                       (list (read args) (car (magit-log-arguments))))
+                      (t
+                       (list (list args) (car (magit-log-arguments))))))
                (default-directory (orgit--repository-directory repo)))
-    (apply #'magit-log-other
-           (cond ((string-prefix-p "((" args)
-                  (read args))
-                 ((string-prefix-p "(" args)
-                  (cons (read args) (magit-log-arguments)))
-                 (t
-                  (cons (list args) (magit-log-arguments)))))))
+    (magit-log-setup-buffer revs args files)))
 
 ;;;###autoload
 (defun orgit-log-export (path desc format)
@@ -347,7 +344,7 @@ prefix argument is reversed.
 When the region selects one or more commits, e.g. in a log, then
 store links to the Magit-Revision mode buffers for these commits."
   (cond ((eq major-mode 'magit-revision-mode)
-         (orgit-rev-store-1 (car magit-refresh-args)))
+         (orgit-rev-store-1 magit-buffer-revision))
         ((derived-mode-p 'magit-mode)
          (when-let ((revs (magit-region-values 'commit)))
            (mapc 'orgit-rev-store-1 revs)
@@ -372,8 +369,8 @@ store links to the Magit-Revision mode buffers for these commits."
 (defun orgit-rev-open (path)
   (pcase-let* ((`(,repo ,rev) (split-string path "::"))
                (default-directory (orgit--repository-directory repo)))
-    (apply #'magit-show-commit
-           (cons rev (magit-diff-arguments)))))
+    (magit-revision-setup-buffer
+     rev (car (magit-diff-arguments 'magit-revision-mode)) nil)))
 
 ;;;###autoload
 (defun orgit-rev-export (path desc format)

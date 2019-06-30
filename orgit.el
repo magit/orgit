@@ -1,11 +1,11 @@
 ;;; orgit.el --- support for Org links to Magit buffers
 
-;; Copyright (C) 2014-2018  The Magit Project Developers
+;; Copyright (C) 2014-2019  The Magit Project Developers
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
 
-;; Package-Requires: ((emacs "25.1") (dash "2.14.1") (magit "2.90.0") (org "8.3.3"))
+;; Package-Requires: ((emacs "25.1") (dash "2.14.1") (magit "2.90.0") (org "9.3"))
 ;; Homepage: https://github.com/magit/orgit
 
 ;; This library is free software; you can redistribute it and/or modify
@@ -250,7 +250,7 @@ In that case `orgit-rev-store' stores one or more links instead."
   (when (and (eq major-mode 'magit-status-mode)
              (not (magit-region-sections 'commit)))
     (let ((repo (orgit--current-repository)))
-      (org-store-link-props
+      (org-link-store-props
        :type        "orgit"
        :link        (format "orgit:%s" repo)
        :description (format "%s (magit-status)" repo)))))
@@ -293,7 +293,7 @@ In that case `orgit-rev-store' stores one or more links instead."
                       (list magit-buffer-revisions
                             magit-buffer-log-args))
                   magit-buffer-revisions)))
-      (org-store-link-props
+      (org-link-store-props
        :type        "orgit-log"
        :link        (format "orgit-log:%s::%S" repo args)
        :description (format "%s %S" repo (cons 'magit-log args))))))
@@ -358,7 +358,7 @@ store links to the Magit-Revision mode buffers for these commits."
                   (or (and (magit-ref-p rev) rev)
                       (magit-name-tag rev)
                       (magit-name-branch rev)))))
-    (org-store-link-props
+    (org-link-store-props
      :type        "orgit-rev"
      :link        (format "orgit-rev:%s::%s" repo
                           (or ref (magit-rev-parse rev)))

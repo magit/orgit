@@ -1,6 +1,6 @@
 ;;; orgit.el --- support for Org links to Magit buffers
 
-;; Copyright (C) 2014-2019  The Magit Project Developers
+;; Copyright (C) 2014-2019  The Magit Project Contributors
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>

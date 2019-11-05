@@ -142,7 +142,7 @@
   "Alist used to translate Git urls to web urls when exporting links.
 
 Each entry has the form (REMOTE-REGEXP STATUS LOG REVISION).  If
-a REMOTE-REGEXP matches the url of the choosen remote then one of
+a REMOTE-REGEXP matches the url of the chosen remote then one of
 the corresponding format strings STATUS, LOG or REVISION is used
 according to the major mode of the buffer being linked to.
 
@@ -167,7 +167,7 @@ are defined then `orgit-remote' and `orgit.remote' have no effect."
 (defcustom orgit-remote "origin"
   "Default remote used when exporting links.
 
-If there exists but one remote, then that is used unconditionaly.
+If there exists but one remote, then that is used unconditionally.
 Otherwise if the Git variable `orgit.remote' is defined and that
 remote exists, then that is used.  Finally the value of this
 variable is used, provided it does exist in the given repository.
@@ -203,7 +203,7 @@ configured in `magit-repository-directory'."
   :type 'boolean)
 
 (defcustom orgit-store-reference nil
-  "Whether `orgit-rev-store' attemts to store link to a reference.
+  "Whether `orgit-rev-store' attempts to store link to a reference.
 
 If nil, then store a link to the commit itself, using its full
 hash.

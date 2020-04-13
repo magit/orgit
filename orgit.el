@@ -1,4 +1,4 @@
-;;; orgit.el --- support for Org links to Magit buffers
+;;; orgit.el --- support for Org links to Magit buffers  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2014-2020  The Magit Project Contributors
 
@@ -222,7 +222,7 @@ then store a link to the commit itself."
   '(define-key magit-mode-map [remap org-store-link] 'orgit-store-link))
 
 ;;;###autoload
-(defun orgit-store-link (arg)
+(defun orgit-store-link (_arg)
   "Like `org-store-link' but store links to all selected commits, if any."
   (interactive "P")
   (if-let ((sections (magit-region-sections 'commit)))

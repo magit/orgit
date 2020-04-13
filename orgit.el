@@ -1,6 +1,6 @@
 ;;; orgit.el --- support for Org links to Magit buffers
 
-;; Copyright (C) 2014-2019  The Magit Project Contributors
+;; Copyright (C) 2014-2020  The Magit Project Contributors
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
@@ -423,14 +423,14 @@ store links to the Magit-Revision mode buffers for these commits."
       (abbreviate-file-name default-directory)))
 
 (defun orgit--repository-directory (repo)
-  (if (file-name-absolute-p repo)
-      (let ((dir (file-name-as-directory (expand-file-name repo))))
-        (unless (file-exists-p dir)
-          (error "Cannot open link; %S does not exist" dir))
-        dir)
-    (or (cdr (assoc repo (magit-repos-alist)))
-        (error "Cannot open link; no entry for %S in `%s'"
-               repo 'magit-repository-directories))))
+  (let ((dir (or (cdr (assoc repo (magit-repos-alist)))
+                 (file-name-as-directory (expand-file-name repo)))))
+    (cond ((file-exists-p dir) dir)
+          ((string-match-p "\\`[./]" repo)
+           (error "Cannot open link; %S does not exist" dir))
+          (t
+           (error "Cannot open link; no entry for %S in `%s'"
+                  repo 'magit-repository-directories)))))
 
 ;;; _
 (provide 'orgit)

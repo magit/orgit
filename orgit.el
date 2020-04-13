@@ -5,7 +5,7 @@
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
 
-;; Package-Requires: ((emacs "25.1") (dash "2.16.0") (magit "2.90.1") (org "9.3"))
+;; Package-Requires: ((emacs "25.1") (magit "2.90.1") (org "9.3"))
 ;; Homepage: https://github.com/magit/orgit
 
 ;; This library is free software; you can redistribute it and/or modify
@@ -89,7 +89,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'dash)
 (require 'format-spec)
 (require 'magit)
 (require 'org)
@@ -401,8 +400,9 @@ store links to the Magit-Revision mode buffers for these commits."
         (if-let ((link (or (when-let ((url (magit-get "orgit" gitvar)))
                              (format-spec url `((?r . ,rev))))
                            (when-let ((url (magit-get "remote" remote "url"))
-                                      (format (--first
-                                               (string-match (car it) url)
+                                      (format (cl-find-if
+                                               (lambda (elt)
+                                                 (string-match (car elt) url))
                                                orgit-export-alist)))
                                (format-spec (nth idx format)
                                             `((?n . ,(match-string 1 url))

@@ -303,14 +303,14 @@ In that case `orgit-rev-store' stores one or more links instead."
 ;;;###autoload
 (defun orgit-log-open (path)
   (pcase-let* ((`(,repo ,args) (split-string path "::"))
+               (default-directory (orgit--repository-directory repo))
                (`(,revs ,args ,files)
                 (cond ((string-prefix-p "((" args)
                        (read args))
                       ((string-prefix-p "(" args)
                        (list (read args) (car (magit-log-arguments))))
                       (t
-                       (list (list args) (car (magit-log-arguments))))))
-               (default-directory (orgit--repository-directory repo)))
+                       (list (list args) (car (magit-log-arguments)))))))
     (magit-log-setup-buffer revs args files)))
 
 ;;;###autoload

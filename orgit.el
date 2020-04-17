@@ -217,7 +217,7 @@ then store a link to the commit itself."
 ;;; Command
 
 ;;;###autoload
-(eval-after-load "magit"
+(eval-after-load 'magit
   '(define-key magit-mode-map [remap org-store-link] 'orgit-store-link))
 
 ;;;###autoload
@@ -237,7 +237,7 @@ then store a link to the commit itself."
 ;;; Status
 
 ;;;###autoload
-(eval-after-load "org"
+(eval-after-load 'org
   '(orgit-link-set-parameters "orgit"
                               :store    'orgit-status-store
                               :follow   'orgit-status-open
@@ -272,7 +272,7 @@ In that case `orgit-rev-store' stores one or more links instead."
 ;;; Log
 
 ;;;###autoload
-(eval-after-load "org"
+(eval-after-load 'org
   '(orgit-link-set-parameters "orgit-log"
                               :store    'orgit-log-store
                               :follow   'orgit-log-open
@@ -327,7 +327,7 @@ In that case `orgit-rev-store' stores one or more links instead."
 ;;; Revision
 
 ;;;###autoload
-(eval-after-load "org"
+(eval-after-load 'org
   '(orgit-link-set-parameters "orgit-rev"
                               :store    'orgit-rev-store
                               :follow   'orgit-rev-open

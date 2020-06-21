@@ -407,13 +407,16 @@ store links to the Magit-Revision mode buffers for these commits."
                                (format-spec (nth idx format)
                                             `((?n . ,(match-string 1 url))
                                               (?r . ,rev)))))))
-            (pcase format
-              (`html  (format "<a href=\"%s\">%s</a>" link desc))
-              (`latex (format "\\href{%s}{%s}" link desc))
-              (`ascii link)
-              (_      link))
+            (orgit--format-export link desc format)
           (error "Cannot determine public url for %s" path))
       (error "Cannot determine public remote for %s" default-directory))))
+
+(defun orgit--format-export (link desc format)
+  (pcase format
+    (`html  (format "<a href=\"%s\">%s</a>" link desc))
+    (`latex (format "\\href{%s}{%s}" link desc))
+    (`ascii link)
+    (_      link)))
 
 ;;; Utilities
 

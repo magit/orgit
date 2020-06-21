@@ -250,7 +250,7 @@ then store a link to the commit itself."
 When the region selects one or more commits, then do nothing.
 In that case `orgit-rev-store' stores one or more links instead."
   (when (and (eq major-mode 'magit-status-mode)
-             (not (magit-region-sections 'commit)))
+             (not (magit-region-sections '(commit issue pullreq))))
     (let ((repo (orgit--current-repository)))
       (org-link-store-props
        :type        "orgit"

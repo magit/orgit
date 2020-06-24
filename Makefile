@@ -6,11 +6,8 @@ ELS   = $(PKG).el
 ELCS  = $(ELS:.el=.elc)
 
 DEPS  = dash
-DEPS += hydra # for lv.el
-DEPS += ghub
-DEPS += org/lisp
-DEPS += magit-popup
 DEPS += magit/lisp
+DEPS += org/lisp
 DEPS += transient/lisp
 DEPS += with-editor
 

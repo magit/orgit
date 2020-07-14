@@ -319,7 +319,16 @@ In that case `orgit-rev-store' stores one or more links instead."
 
 ;;;###autoload
 (defun orgit-log-export (path desc format)
-  (orgit-export path desc format "log" 2))
+  (pcase-let* ((`(,repo ,args) (split-string path "::"))
+               (first-branch (cond ((string-prefix-p "((" args)
+                                    (caar (read args)))
+                                   ((string-prefix-p "(" args)
+                                    (car (read args)))
+                                   (t args))))
+    (when (string-prefix-p "--" first-branch)
+      (setq first-branch nil))
+    (orgit-export (concat repo "::" first-branch)
+                  desc format "log" 2)))
 
 ;;;###autoload
 (defun orgit-log-complete-link (&optional arg)

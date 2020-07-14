@@ -126,6 +126,10 @@
      "https://gitlab.com/%n"
      "https://gitlab.com/%n/commits/%r"
      "https://gitlab.com/%n/commit/%r")
+    ("git.sr.ht[:/]\\(.+?\\)\\(?:\\.git\\)?$"
+     "https://git.sr.ht/%n"
+     "https://git.sr.ht/%n/log/%r"
+     "https://git.sr.ht/%n/commit/%r")
     ("bitbucket.org[:/]\\(.+?\\)\\(?:\\.git\\)?$"
      "https://bitbucket.org/%n"
      "https://bitbucket.org/%n/commits/branch/%r"

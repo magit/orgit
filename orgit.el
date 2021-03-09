@@ -401,31 +401,37 @@ store links to the Magit-Revision mode buffers for these commits."
 ;;; Export
 
 (defun orgit-export (path desc format gitvar idx)
-  (pcase-let*
-      ((`(,dir ,rev) (split-string path "::"))
-       (default-directory (file-name-as-directory (expand-file-name dir)))
-       (remotes (magit-git-lines "remote"))
-       (remote  (magit-get "orgit.remote"))
-       (remote  (cond ((= (length remotes) 1) (car remotes))
-                      ((member remote remotes) remote)
-                      ((member orgit-remote remotes) orgit-remote))))
-    (if remote
-        (if-let ((link (or (when-let ((url (magit-get "orgit" gitvar)))
-                             (format-spec url `((?r . ,rev))))
-                           (when-let ((url (magit-get "remote" remote "url"))
-                                      (format (cl-find-if
-                                               (lambda (elt)
-                                                 (string-match (car elt) url))
-                                               orgit-export-alist)))
-                               (format-spec (nth idx format)
-                                            `((?n . ,(match-string 1 url))
-                                              (?r . ,rev)))))))
-            (orgit--format-export link desc format)
-          (signal 'org-link-broken
-                  (list (format "Cannot determine public url for %s" path))))
+  (pcase-let* ((`(,dir ,rev) (split-string path "::"))
+               (dir (file-name-as-directory (expand-file-name dir))))
+    (if (file-exists-p dir)
+        (let* ((default-directory dir)
+               (remotes (magit-git-lines "remote"))
+               (remote  (magit-get "orgit.remote"))
+               (remote  (cond ((= (length remotes) 1) (car remotes))
+                              ((member remote remotes) remote)
+                              ((member orgit-remote remotes) orgit-remote))))
+          (if remote
+              (if-let ((link
+                        (or (when-let ((url (magit-get "orgit" gitvar)))
+                              (format-spec url `((?r . ,rev))))
+                            (when-let ((url (magit-get "remote" remote "url"))
+                                       (format (cl-find-if
+                                                (lambda (elt)
+                                                  (string-match (car elt) url))
+                                                orgit-export-alist)))
+                              (format-spec (nth idx format)
+                                           `((?n . ,(match-string 1 url))
+                                             (?r . ,rev)))))))
+                  (orgit--format-export link desc format)
+                (signal 'org-link-broken
+                        (list (format "Cannot determine public url for %s"
+                                      path))))
+            (signal 'org-link-broken
+                    (list (format "Cannot determine public remote for %s"
+                                  default-directory)))))
       (signal 'org-link-broken
-              (list (format "Cannot determine public remote for %s"
-                            default-directory))))))
+              (list (format "Cannot determine public url for %s %s"
+                            path "(which itself does not exist)"))))))
 
 (defun orgit--format-export (link desc format)
   (pcase format

@@ -1,6 +1,6 @@
 ;;; orgit.el --- support for Org links to Magit buffers  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2014-2020  The Magit Project Contributors
+;; Copyright (C) 2014-2021  The Magit Project Contributors
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
@@ -421,8 +421,11 @@ store links to the Magit-Revision mode buffers for these commits."
                                             `((?n . ,(match-string 1 url))
                                               (?r . ,rev)))))))
             (orgit--format-export link desc format)
-          (error "Cannot determine public url for %s" path))
-      (error "Cannot determine public remote for %s" default-directory))))
+          (signal 'org-link-broken
+                  (list (format "Cannot determine public url for %s" path))))
+      (signal 'org-link-broken
+              (list (format "Cannot determine public remote for %s"
+                            default-directory))))))
 
 (defun orgit--format-export (link desc format)
   (pcase format

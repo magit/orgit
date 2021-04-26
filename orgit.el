@@ -7,6 +7,7 @@
 
 ;; Package-Requires: ((emacs "25.1") (magit "2.90.1") (org "9.3"))
 ;; Homepage: https://github.com/magit/orgit
+;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;; This library is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

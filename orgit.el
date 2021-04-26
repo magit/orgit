@@ -271,7 +271,8 @@ In that case `orgit-rev-store' stores one or more links instead."
 
 ;;;###autoload
 (defun orgit-status-complete-link (&optional arg)
-  (concat "orgit:" (abbreviate-file-name (magit-read-repository arg))))
+  (let ((default-directory (magit-read-repository arg)))
+    (concat "orgit:" (orgit--current-repository))))
 
 ;;; Log
 
@@ -334,7 +335,7 @@ In that case `orgit-rev-store' stores one or more links instead."
 (defun orgit-log-complete-link (&optional arg)
   (let ((default-directory (magit-read-repository arg)))
     (format "orgit-log:%s::%s"
-            (abbreviate-file-name default-directory)
+            (orgit--current-repository)
             (magit-read-branch-or-commit "Revision"))))
 
 ;;; Revision
@@ -395,7 +396,7 @@ store links to the Magit-Revision mode buffers for these commits."
 (defun orgit-rev-complete-link (&optional arg)
   (let ((default-directory (magit-read-repository arg)))
     (format "orgit-rev:%s::%s"
-            (abbreviate-file-name default-directory)
+            (orgit--current-repository)
             (magit-read-branch-or-commit "Revision"))))
 
 ;;; Export

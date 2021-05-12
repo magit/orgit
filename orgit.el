@@ -222,8 +222,8 @@ then store a link to the commit itself."
 ;;; Command
 
 ;;;###autoload
-(eval-after-load 'magit
-  '(define-key magit-mode-map [remap org-store-link] 'orgit-store-link))
+(with-eval-after-load 'magit
+  (define-key magit-mode-map [remap org-store-link] 'orgit-store-link))
 
 ;;;###autoload
 (defun orgit-store-link (_arg)
@@ -242,12 +242,12 @@ then store a link to the commit itself."
 ;;; Status
 
 ;;;###autoload
-(eval-after-load 'org
-  '(orgit-link-set-parameters "orgit"
-                              :store    'orgit-status-store
-                              :follow   'orgit-status-open
-                              :export   'orgit-status-export
-                              :complete 'orgit-status-complete-link))
+(with-eval-after-load 'org
+  (orgit-link-set-parameters "orgit"
+                             :store    'orgit-status-store
+                             :follow   'orgit-status-open
+                             :export   'orgit-status-export
+                             :complete 'orgit-status-complete-link))
 
 ;;;###autoload
 (defun orgit-status-store ()
@@ -278,12 +278,12 @@ In that case `orgit-rev-store' stores one or more links instead."
 ;;; Log
 
 ;;;###autoload
-(eval-after-load 'org
-  '(orgit-link-set-parameters "orgit-log"
-                              :store    'orgit-log-store
-                              :follow   'orgit-log-open
-                              :export   'orgit-log-export
-                              :complete 'orgit-log-complete-link))
+(with-eval-after-load 'org
+  (orgit-link-set-parameters "orgit-log"
+                             :store    'orgit-log-store
+                             :follow   'orgit-log-open
+                             :export   'orgit-log-export
+                             :complete 'orgit-log-complete-link))
 
 ;;;###autoload
 (defun orgit-log-store ()
@@ -342,12 +342,12 @@ In that case `orgit-rev-store' stores one or more links instead."
 ;;; Revision
 
 ;;;###autoload
-(eval-after-load 'org
-  '(orgit-link-set-parameters "orgit-rev"
-                              :store    'orgit-rev-store
-                              :follow   'orgit-rev-open
-                              :export   'orgit-rev-export
-                              :complete 'orgit-rev-complete-link))
+(with-eval-after-load 'org
+  (orgit-link-set-parameters "orgit-rev"
+                             :store    'orgit-rev-store
+                             :follow   'orgit-rev-open
+                             :export   'orgit-rev-export
+                             :complete 'orgit-rev-complete-link))
 
 ;;;###autoload
 (defun orgit-rev-store ()

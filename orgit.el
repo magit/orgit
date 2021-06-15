@@ -233,7 +233,7 @@ then store a link to the commit itself."
       (save-excursion
         (dolist (section sections)
           (goto-char (oref section start))
-	  (set-mark (point))
+          (set-mark (point))
           (activate-mark)
           (call-interactively 'org-store-link))
         (deactivate-mark))

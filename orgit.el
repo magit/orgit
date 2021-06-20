@@ -219,6 +219,25 @@ then store a link to the commit itself."
   :group 'orgit
   :type 'boolean)
 
+(defcustom orgit-rev-description-format "%%N (magit-rev %%R)"
+  "Format used for `orgit-rev' links.
+
+The format is used in two passes.  The first pass consumes all
+specs of the form `%C'; to preserve a spec for the second pass
+it has to be quoted like `%%C'.
+
+The first pass accepts the \"pretty formats\" documented in
+the git-show(1) manpage.  The second pass accepts these specs:
+
+`%%N' The name or id of the repository.
+`%%R' If `orgit-store-reference' is non-nil, then the tag or
+      branch that points at the commit, if any.  Otherwise the
+      abbreviated commit hash. (A prefix argument reverses the
+      meaning of `orgit-store-reference'.)"
+  :package-version '(orgit . "1.8.0")
+  :group 'orgit
+  :type 'string)
+
 ;;; Command
 
 ;;;###autoload
@@ -379,8 +398,10 @@ store links to the Magit-Revision mode buffers for these commits."
      :type        "orgit-rev"
      :link        (format "orgit-rev:%s::%s" repo
                           (or ref (magit-rev-parse rev)))
-     :description (format "%s (magit-rev %s)" repo
-                          (or ref (magit-rev-abbrev rev))))))
+     :description (format-spec
+                   (magit-rev-format orgit-rev-description-format rev)
+                   `((?N . ,repo)
+                     (?R . ,(or ref (magit-rev-abbrev rev))))))))
 
 ;;;###autoload
 (defun orgit-rev-open (path)

@@ -404,7 +404,7 @@ store links to the Magit-Revision mode buffers for these commits."
 
 (defun orgit-export (path desc format gitvar idx)
   (pcase-let* ((`(,dir ,rev) (split-string path "::"))
-               (dir (file-name-as-directory (expand-file-name dir))))
+               (dir (orgit--repository-directory dir)))
     (if (file-exists-p dir)
         (let* ((default-directory dir)
                (remotes (magit-git-lines "remote"))

@@ -6,7 +6,7 @@
 ;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
 
 ;; Package-Requires: ((emacs "25.1") (magit "3.0") (org "9.4"))
-;; Package-Version: 1.7.2
+;; Package-Version: 1.8.0
 ;; Homepage: https://github.com/magit/orgit
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 

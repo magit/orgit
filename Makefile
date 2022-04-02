@@ -9,7 +9,7 @@ DEPS  = dash
 DEPS += magit/lisp
 DEPS += org/lisp
 DEPS += transient/lisp
-DEPS += with-editor
+DEPS += with-editor/lisp
 
 EMACS      ?= emacs
 EMACS_ARGS ?=

@@ -373,7 +373,8 @@ store links to the Magit-Revision mode buffers for these commits."
   (cond ((eq major-mode 'magit-revision-mode)
          (orgit-rev-store-1 magit-buffer-revision))
         ((derived-mode-p 'magit-mode)
-         (when-let ((revs (magit-region-values 'commit)))
+         (when-let* ((revs (magit-region-values 'commit)))
+           ;; Cannot use and-let* because of debbugs#31840.
            (mapc #'orgit-rev-store-1 revs)
            t))))
 
@@ -426,9 +427,9 @@ store links to the Magit-Revision mode buffers for these commits."
                               ((member orgit-remote remotes) orgit-remote))))
           (if remote
               (if-let ((link
-                        (or (when-let ((url (magit-get "orgit" gitvar)))
+                        (or (and-let* ((url (magit-get "orgit" gitvar)))
                               (format-spec url `((?r . ,rev))))
-                            (when-let ((url (magit-get "remote" remote "url"))
+                            (and-let* ((url (magit-get "remote" remote "url"))
                                        (format (cl-find-if
                                                 (lambda (elt)
                                                   (string-match (car elt) url))

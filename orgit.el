@@ -448,9 +448,9 @@ store links to the Magit-Revision mode buffers for these commits."
 
 (defun orgit--format-export (link desc format)
   (pcase format
-    (`html  (format "<a href=\"%s\">%s</a>" link desc))
-    (`latex (format "\\href{%s}{%s}" link desc))
-    (`ascii link)
+    ('html  (format "<a href=\"%s\">%s</a>" link desc))
+    ('latex (format "\\href{%s}{%s}" link desc))
+    ('ascii link)
     (_      link)))
 
 ;;; Utilities

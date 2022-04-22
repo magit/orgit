@@ -1,31 +1,32 @@
-;;; orgit.el --- support for Org links to Magit buffers  -*- lexical-binding: t; -*-
+;;; orgit.el --- Support for Org links to Magit buffers  -*- lexical-binding:t -*-
 
-;; Copyright (C) 2014-2022  The Magit Project Contributors
+;; Copyright (C) 2014-2022 The Magit Project Contributors
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
-;; Maintainer: Jonas Bernoulli <jonas@bernoul.li>
-
-;; Package-Requires: ((emacs "25.1") (compat "28.1.1.0") (magit "3.0") (org "9.4"))
-;; Package-Version: 1.8.0-git
 ;; Homepage: https://github.com/magit/orgit
+;; Keywords: hypermedia vc
+
+;; Package-Version: 1.8.0-git
+;; Package-Requires: (
+;;     (emacs "25.1")
+;;     (compat "28.1.1.0")
+;;     (magit "3.0")
+;;     (org "9.4"))
+
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
-;; This library is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
+;; This file is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published
+;; by the Free Software Foundation, either version 3 of the License,
+;; or (at your option) any later version.
 ;;
-;; This library is distributed in the hope that it will be useful,
+;; This file is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
 ;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this library.  If not, see http://www.gnu.org/licenses.
-
-;; This library was inspired by `org-magit.el' which was written by
-;; Yann Hodique <yann.hodique@gmail.com> and is distributed under the
-;; GNU General Public License version 2 or later.
+;; along with this file.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 

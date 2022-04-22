@@ -422,7 +422,7 @@ store links to the Magit-Revision mode buffers for these commits."
         (let* ((default-directory dir)
                (remotes (magit-git-lines "remote"))
                (remote  (magit-get "orgit.remote"))
-               (remote  (cond ((= (length remotes) 1) (car remotes))
+               (remote  (cond ((length= remotes 1) (car remotes))
                               ((member remote remotes) remote)
                               ((member orgit-remote remotes) orgit-remote))))
           (if remote

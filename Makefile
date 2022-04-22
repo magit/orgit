@@ -5,7 +5,8 @@ PKG = orgit
 ELS   = $(PKG).el
 ELCS  = $(ELS:.el=.elc)
 
-DEPS  = dash
+DEPS  = compat
+DEPS += dash
 DEPS += magit/lisp
 DEPS += org/lisp
 DEPS += transient/lisp

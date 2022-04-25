@@ -205,7 +205,10 @@ hash.
 
 If t, then attempt to store a link to a tag or branch.  If that
 is not possible because no such reference points at the commit,
-then store a link to the commit itself."
+then store a link to the commit itself.
+
+The prefix argument also affects how the revision is stored,
+see `orgit-rev-store'."
   :package-version '(orgit . "1.6.0")
   :group 'orgit
   :type 'boolean)
@@ -217,14 +220,13 @@ The format is used in two passes.  The first pass consumes all
 specs of the form `%C'; to preserve a spec for the second pass
 it has to be quoted like `%%C'.
 
-The first pass accepts the \"pretty formats\" documented in
-the git-show(1) manpage.  The second pass accepts these specs:
+The first pass accepts the \"pretty format\" specs documented
+in the git-show(1) manpage.
 
+The second pass accepts these specs:
 `%%N' The name or id of the repository.
-`%%R' If `orgit-store-reference' is non-nil, then the tag or
-      branch that points at the commit, if any.  Otherwise the
-      abbreviated commit hash. (A prefix argument reverses the
-      meaning of `orgit-store-reference'.)"
+`%%R' Either a reference, abbreviated revision or revision of
+      the form \":/TEXT\".  See `orgit-ref-store'."
   :package-version '(orgit . "1.8.0")
   :group 'orgit
   :type 'string)
@@ -362,11 +364,20 @@ In that case `orgit-rev-store' stores one or more links instead."
 ;;;###autoload
 (defun orgit-rev-store ()
   "Store a link to a Magit-Revision mode buffer.
-With a prefix argument instead store the name of a tag or branch
-that points at the revision, if any.
 
-If `orgit-store-reference' is non-nil, then the meaning of the
-prefix argument is reversed.
+By default store an abbreviated revision hash.
+
+\\<global-map>With a single \\[universal-argument] \
+prefix argument instead store the name of a tag
+or branch that points at the revision, if any.  The meaning of this
+prefix argument is reversed if `orgit-store-reference' is non-nil.
+
+With a single \\[negative-argument] \
+negative prefix argument store revision using the
+form \":/TEXT\", which is described in the gitrevisions(7) manpage.
+
+When more than one prefix argument is used, then `org-store-link'
+stores a link itself, without calling this function.
 
 When the region selects one or more commits, e.g. in a log, then
 store links to the Magit-Revision mode buffers for these commits."
@@ -379,21 +390,29 @@ store links to the Magit-Revision mode buffers for these commits."
            t))))
 
 (defun orgit-rev-store-1 (rev)
-  (let ((repo (orgit--current-repository))
-        (ref (and (if orgit-store-reference
-                      (not current-prefix-arg)
-                    current-prefix-arg)
-                  (or (and (magit-ref-p rev) rev)
-                      (magit-name-tag rev)
-                      (magit-name-branch rev)))))
+  (pcase-let* ((repo (orgit--current-repository))
+               (`(,rev ,desc)
+                (pcase (list current-prefix-arg orgit-store-reference)
+                  ((or '((4) nil) '(nil t))
+                   (if-let ((ref (or (and (magit-ref-p rev) rev)
+                                     (magit-name-tag rev)
+                                     (magit-name-branch rev))))
+                       (list ref ref)
+                     (list (magit-rev-parse rev)
+                           (magit-rev-abbrev rev))))
+                  (`(- ,_)
+                   (let ((txt (concat ":/" (magit-rev-format "%s" rev))))
+                     (list txt txt)))
+                  (_
+                   (list (magit-rev-parse rev)
+                         (magit-rev-abbrev rev))))))
     (org-link-store-props
      :type        "orgit-rev"
-     :link        (format "orgit-rev:%s::%s" repo
-                          (or ref (magit-rev-parse rev)))
+     :link        (format "orgit-rev:%s::%s" repo rev)
      :description (format-spec
                    (magit-rev-format orgit-rev-description-format rev)
                    `((?N . ,repo)
-                     (?R . ,(or ref (magit-rev-abbrev rev))))))))
+                     (?R . ,desc))))))
 
 ;;;###autoload
 (defun orgit-rev-open (path)

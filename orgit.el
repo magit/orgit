@@ -6,7 +6,7 @@
 ;; Homepage: https://github.com/magit/orgit
 ;; Keywords: hypermedia vc
 
-;; Package-Version: 1.8.0-git
+;; Package-Version: 1.8.0.50-git
 ;; Package-Requires: (
 ;;     (emacs "25.1")
 ;;     (compat "28.1.1.0")

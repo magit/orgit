@@ -9,7 +9,7 @@
 ;; Package-Version: 1.8.0.50-git
 ;; Package-Requires: (
 ;;     (emacs "25.1")
-;;     (compat "28.1.1.0")
+;;     (compat "29.1.3.4")
 ;;     (magit "3.0")
 ;;     (org "9.4"))
 

@@ -9,9 +9,9 @@
 ;; Package-Version: 1.8.0.50-git
 ;; Package-Requires: (
 ;;     (emacs "25.1")
-;;     (compat "29.1.3.4")
-;;     (magit "3.0")
-;;     (org "9.4"))
+;;     (compat "29.1.4.1")
+;;     (magit "3.3.0")
+;;     (org "9.6.5"))
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 

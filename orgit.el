@@ -382,7 +382,7 @@ form \":/TEXT\", which is described in the gitrevisions(7) manpage.
 When more than one prefix argument is used, then `org-store-link'
 stores a link itself, without calling this function.
 
-When the region selects one or more commits, e.g. in a log, then
+When the region selects one or more commits, e.g., in a log, then
 store links to the Magit-Revision mode buffers for these commits."
   (cond ((eq major-mode 'magit-revision-mode)
          (orgit-rev-store-1 magit-buffer-revision))

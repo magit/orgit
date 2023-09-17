@@ -235,7 +235,7 @@ The second pass accepts these specs:
 
 ;;;###autoload
 (with-eval-after-load 'magit
-  (define-key magit-mode-map [remap org-store-link] #'orgit-store-link))
+  (keymap-set magit-mode-map "<remap> <org-store-link>" #'orgit-store-link))
 
 ;;;###autoload
 (defun orgit-store-link (_arg)

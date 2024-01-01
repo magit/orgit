@@ -1,6 +1,6 @@
 ;;; orgit.el --- Support for Org links to Magit buffers  -*- lexical-binding:t -*-
 
-;; Copyright (C) 2014-2023 The Magit Project Contributors
+;; Copyright (C) 2014-2024 The Magit Project Contributors
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Homepage: https://github.com/magit/orgit

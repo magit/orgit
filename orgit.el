@@ -9,7 +9,7 @@
 ;; Package-Version: 1.9.0
 ;; Package-Requires: (
 ;;     (emacs "25.1")
-;;     (compat "29.1.4.1")
+;;     (compat "30.0.0.0")
 ;;     (magit "3.3.0")
 ;;     (org "9.6.5"))
 

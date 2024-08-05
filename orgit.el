@@ -8,7 +8,7 @@
 
 ;; Package-Version: 1.9.0
 ;; Package-Requires: (
-;;     (emacs "25.1")
+;;     (emacs "26.1")
 ;;     (compat "30.0.0.0")
 ;;     (magit "3.3.0")
 ;;     (org "9.6.5"))

@@ -148,7 +148,7 @@ LOG and REVISION additionally have to contain %r which is
 replaced with the appropriate revision.
 
 This can be overwritten in individual repositories using the Git
-variables `orgit.status', `orgit.log' and `orgit.commit'. The
+variables `orgit.status', `orgit.log' and `orgit.commit'.  The
 values of these variables must not contain %n, but in case of the
 latter two variables they must contain %r.  When these variables
 are defined then `orgit-remote' and `orgit.remote' have no effect."

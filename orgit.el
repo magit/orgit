@@ -8,7 +8,7 @@
 
 ;; Package-Version: 2.0.1
 ;; Package-Requires: (
-;;     (emacs "26.1")
+;;     (emacs "27.1")
 ;;     (compat "30.0.2.0")
 ;;     (magit "4.3.1")
 ;;     (org "9.7.11"))

@@ -118,6 +118,11 @@
      "https://gitlab.com/%n"
      "https://gitlab.com/%n/commits/%r"
      "https://gitlab.com/%n/commit/%r")
+    ("codeberg.org\\(/\\|:git@\\)\\(.+?\\)\\(?:\\.git\\)?$"
+     "https://codeberg.org/%n"
+     ;; Redirects to commits/branch/%r.
+     "https://codeberg.org/%n/commits/%r"
+     "https://codeberg.org/%n/commit/%r")
     ("git.sr.ht[:/]\\(.+?\\)\\(?:\\.git\\)?$"
      "https://git.sr.ht/%n"
      "https://git.sr.ht/%n/log/%r"

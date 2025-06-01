@@ -6,12 +6,12 @@
 ;; Homepage: https://github.com/magit/orgit
 ;; Keywords: hypermedia vc
 
-;; Package-Version: 2.0.2
+;; Package-Version: 2.0.3
 ;; Package-Requires: (
 ;;     (emacs "27.1")
-;;     (compat "30.0.2.0")
-;;     (magit "4.3.2")
-;;     (org "9.7.26"))
+;;     (compat "30.1")
+;;     (magit "4.3.6")
+;;     (org "9.7"))
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 

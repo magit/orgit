@@ -6,7 +6,7 @@
 ;; Homepage: https://github.com/magit/orgit
 ;; Keywords: hypermedia vc
 
-;; Package-Version: 2.0.4
+;; Package-Version: 2.0.5
 ;; Package-Requires: (
 ;;     (emacs "27.1")
 ;;     (compat "30.1")

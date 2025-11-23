@@ -8,10 +8,11 @@
 
 ;; Package-Version: 2.1.0
 ;; Package-Requires: (
-;;     (emacs  "28.1")
-;;     (compat "30.1")
-;;     (magit   "4.4")
-;;     (org     "9.7"))
+;;     (emacs   "28.1")
+;;     (compat  "30.1")
+;;     (cond-let "0.2")
+;;     (magit    "4.4")
+;;     (org      "9.7"))
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -93,6 +94,7 @@
 
 (require 'cl-lib)
 (require 'compat)
+(require 'cond-let)
 (require 'format-spec)
 (require 'magit)
 (require 'org)
@@ -384,13 +386,12 @@ stores a link itself, without calling this function.
 
 When the region selects one or more commits, e.g., in a log, then
 store links to the Magit-Revision mode buffers for these commits."
-  (cond ((eq major-mode 'magit-revision-mode)
-         (orgit-rev-store-1 magit-buffer-revision))
-        ((derived-mode-p 'magit-mode)
-         (when-let* ((revs (magit-region-values 'commit)))
-           ;; Cannot use and-let* because of debbugs#31840.
-           (mapc #'orgit-rev-store-1 revs)
-           t))))
+  (cond-let ((eq major-mode 'magit-revision-mode)
+             (orgit-rev-store-1 magit-buffer-revision))
+            ([_(derived-mode-p 'magit-mode)]
+             [revs (magit-region-values 'commit)]
+             (mapc #'orgit-rev-store-1 revs)
+             t)))
 
 (defun orgit-rev-store-1 (rev)
   (pcase-let* ((repo (orgit--current-repository))
@@ -440,35 +441,33 @@ store links to the Magit-Revision mode buffers for these commits."
 (defun orgit-export (path desc format gitvar idx)
   (pcase-let* ((`(,dir ,rev) (split-string path "::"))
                (dir (orgit--repository-directory dir)))
-    (if (file-exists-p dir)
-        (let* ((default-directory dir)
-               (remotes (magit-git-lines "remote"))
-               (remote  (magit-get "orgit.remote"))
-               (remote  (cond ((length= remotes 1) (car remotes))
-                              ((member remote remotes) remote)
-                              ((member orgit-remote remotes) orgit-remote))))
-          (if remote
-              (if-let ((link
-                        (or (and-let* ((url (magit-get "orgit" gitvar)))
-                              (format-spec url `((?r . ,rev))))
-                            (and-let* ((url (magit-get "remote" remote "url"))
-                                       (format (cl-find-if
-                                                (lambda (elt)
-                                                  (string-match (car elt) url))
-                                                orgit-export-alist)))
-                              (format-spec (nth idx format)
-                                           `((?n . ,(match-string 1 url))
-                                             (?r . ,rev)))))))
-                  (orgit--format-export link desc format)
-                (signal 'org-link-broken
-                        (list (format "Cannot determine public url for %s"
-                                      path))))
-            (signal 'org-link-broken
-                    (list (format "Cannot determine public remote for %s"
-                                  default-directory)))))
+    (cond-let*
+     ((not (file-exists-p dir))
       (signal 'org-link-broken
               (list (format "Cannot determine public url for %s %s"
-                            path "(which itself does not exist)"))))))
+                            path "(which itself does not exist)"))))
+     [[default-directory dir]
+      [remotes (magit-git-lines "remote")]
+      [remote  (magit-get "orgit.remote")]
+      [remote  (cond ((length= remotes 1) (car remotes))
+                     ((member remote remotes) remote)
+                     ((member orgit-remote remotes) orgit-remote))]]
+     ((not remote)
+      (signal 'org-link-broken
+              (list (format "Cannot determine public remote for %s"
+                            default-directory))))
+     ([url (magit-get "orgit" gitvar)]
+      (orgit--format-export (format-spec url `((?r . ,rev))) desc format))
+     ([url (magit-get "remote" remote "url")]
+      [format (cl-find-if (lambda (elt)
+                            (string-match (car elt) url))
+                          orgit-export-alist)]
+      (orgit--format-export (format-spec (nth idx format)
+                                         `((?n . ,(match-string 1 url))
+                                           (?r . ,rev)))
+                            desc format))
+     ((signal 'org-link-broken
+              (list (format "Cannot determine public url for %s" path)))))))
 
 (defun orgit--format-export (link desc format)
   (pcase format
@@ -497,5 +496,9 @@ store links to the Magit-Revision mode buffers for these commits."
 (provide 'orgit)
 ;; Local Variables:
 ;; indent-tabs-mode: nil
+;; read-symbol-shorthands: (
+;;   ("and-let"  . "cond-let--and-let")
+;;   ("if-let"   . "cond-let--if-let")
+;;   ("when-let" . "cond-let--when-let"))
 ;; End:
 ;;; orgit.el ends here

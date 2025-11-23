@@ -330,8 +330,7 @@ In that case `orgit-rev-store' stores one or more links instead."
                        (read args))
                       ((string-prefix-p "(" args)
                        (list (read args) (car (magit-log-arguments))))
-                      (t
-                       (list (list args) (car (magit-log-arguments)))))))
+                      ((list (list args) (car (magit-log-arguments)))))))
     (magit-log-setup-buffer revs args files)))
 
 ;;;###autoload
@@ -341,7 +340,7 @@ In that case `orgit-rev-store' stores one or more links instead."
                                     (caar (read args)))
                                    ((string-prefix-p "(" args)
                                     (car (read args)))
-                                   (t args))))
+                                   (args))))
     (when (string-prefix-p "--" first-branch)
       (setq first-branch nil))
     (orgit-export (concat repo "::" first-branch)
@@ -491,8 +490,7 @@ store links to the Magit-Revision mode buffers for these commits."
     (cond ((file-exists-p dir) dir)
           ((string-match-p "\\`[./]" repo)
            (error "Cannot open link; %S does not exist" dir))
-          (t
-           (error "Cannot open link; no entry for %S in `%s'"
+          ((error "Cannot open link; no entry for %S in `%s'"
                   repo 'magit-repository-directories)))))
 
 ;;; _

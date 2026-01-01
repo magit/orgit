@@ -442,32 +442,32 @@ store links to the Magit-Revision mode buffers for these commits."
   (pcase-let* ((`(,dir ,rev) (split-string path "::"))
                (dir (orgit--repository-directory dir)))
     (cond-let*
-     ((not (file-exists-p dir))
-      (signal 'org-link-broken
-              (list (format "Cannot determine public url for %s %s"
-                            path "(which itself does not exist)"))))
-     [[default-directory dir]
-      [remotes (magit-git-lines "remote")]
-      [remote  (magit-get "orgit.remote")]
-      [remote  (cond ((length= remotes 1) (car remotes))
-                     ((member remote remotes) remote)
-                     ((member orgit-remote remotes) orgit-remote))]]
-     ((not remote)
-      (signal 'org-link-broken
-              (list (format "Cannot determine public remote for %s"
-                            default-directory))))
-     ([url (magit-get "orgit" gitvar)]
-      (orgit--format-export (format-spec url `((?r . ,rev))) desc format))
-     ([url (magit-get "remote" remote "url")]
-      [format (cl-find-if (lambda (elt)
-                            (string-match (car elt) url))
-                          orgit-export-alist)]
-      (orgit--format-export (format-spec (nth idx format)
-                                         `((?n . ,(match-string 1 url))
-                                           (?r . ,rev)))
-                            desc format))
-     ((signal 'org-link-broken
-              (list (format "Cannot determine public url for %s" path)))))))
+      ((not (file-exists-p dir))
+       (signal 'org-link-broken
+               (list (format "Cannot determine public url for %s %s"
+                             path "(which itself does not exist)"))))
+      [[default-directory dir]
+       [remotes (magit-git-lines "remote")]
+       [remote  (magit-get "orgit.remote")]
+       [remote  (cond ((length= remotes 1) (car remotes))
+                      ((member remote remotes) remote)
+                      ((member orgit-remote remotes) orgit-remote))]]
+      ((not remote)
+       (signal 'org-link-broken
+               (list (format "Cannot determine public remote for %s"
+                             default-directory))))
+      ([url (magit-get "orgit" gitvar)]
+       (orgit--format-export (format-spec url `((?r . ,rev))) desc format))
+      ([url (magit-get "remote" remote "url")]
+       [format (cl-find-if (lambda (elt)
+                             (string-match (car elt) url))
+                           orgit-export-alist)]
+       (orgit--format-export (format-spec (nth idx format)
+                                          `((?n . ,(match-string 1 url))
+                                            (?r . ,rev)))
+                             desc format))
+      ((signal 'org-link-broken
+               (list (format "Cannot determine public url for %s" path)))))))
 
 (defun orgit--format-export (link desc format)
   (pcase format
@@ -496,6 +496,9 @@ store links to the Magit-Revision mode buffers for these commits."
 (provide 'orgit)
 ;; Local Variables:
 ;; indent-tabs-mode: nil
+;; lisp-indent-local-overrides: (
+;;   (cond . 0)
+;;   (interactive . 0))
 ;; read-symbol-shorthands: (
 ;;   ("and-let"  . "cond-let--and-let")
 ;;   ("if-let"   . "cond-let--if-let")

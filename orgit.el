@@ -99,7 +99,6 @@
 
 (require 'compat)
 (require 'cond-let)
-(require 'format-spec)
 (require 'llama)
 (require 'magit)
 (require 'org)

@@ -58,3 +58,4 @@ To explicitly define the web urls, use something like:
 #+html: <a href="https://snapshots.melpa.org/#/orgit"><img alt="MELPA Snapshots" src="https://snapshots.melpa.org/packages/orgit-badge.svg"/></a>
 #+html: <a href="https://releases.melpa.org/#/orgit"><img alt="MELPA Releases" src="https://releases.melpa.org/packages/orgit-badge.svg"/></a>
 #+html: <a href="https://elpa.nongnu.org/nongnu/orgit.html"><img alt="NonGNU ELPA" src="https://emacsair.me/assets/badges/nongnu-elpa.svg"/></a>
+#+html: <a href="https://emacsair.me/human"><img alt="human made" src="https://emacsair.me/assets/badges/human.svg"/></a>
